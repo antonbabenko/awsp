@@ -8,8 +8,6 @@ Excerpt from [IAM Best Practices](http://docs.aws.amazon.com/IAM/latest/UserGuid
 
 To make process of switching profiles (environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` among others) it is handy to use the code provided on this repo.
 
-Note: This code has been tested only on Mac and there are no intentions to make it to work on other systems (if necessary), but PR are very much welcome!
-
 Features
 ========
 
@@ -17,6 +15,7 @@ Features
 * Support configurable location of credentials file (`AWS_SHARED_CREDENTIALS_FILE` environment variable)
 * Full compatibility with official AWS CLI
 * Assume roles which require MFA
+* What else you can think of? Please open an issue or submit PR.
 
 Install
 =======
@@ -69,6 +68,11 @@ To change AWS profile to use production account (111111111111) which requires MF
     # Please enter your MFA token for arn:aws:iam::333333333333:mfa/anton
     > 123456
     
+Note
+====
+
+This code has been tested only on Mac and there are no intentions to make it to work on other systems (if necessary), but PR are very much welcome!
+
 Authors
 =======
 
