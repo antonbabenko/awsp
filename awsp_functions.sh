@@ -49,7 +49,7 @@ function _awsSwitchProfile() {
        export AWS_DEFAULT_PROFILE=$1
        export AWS_ACCESS_KEY_ID=$aws_access_key_id
        export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
-       export AWS_SESSION_TOKEN=$aws_session_token
+       [[ -z "$aws_session_token" ]] && unset AWS_SESSION_TOKEN || export AWS_SESSION_TOKEN=$aws_session_token
 
        echo "Switched to AWS Profile: $1";
        aws configure list
