@@ -12,6 +12,16 @@ function _awsListAll() {
     done < $credentialFileLocation;
 };
 
+function _awsListProfile() {
+    profileFileLocation=$(env | grep AWS_CONFIG_FILE | cut -d= -f2);
+    if [ -z $profileFileLocation ]; then
+        profileFileLocation=~/.aws/config
+    fi
+    while read line; do
+        if [[ $line == "["* ]]; then echo "$line"; fi;
+    done < $profileFileLocation;
+};
+
 function _awsSwitchProfile() {
    if [ -z $1 ]; then  echo "Usage: awsp profilename"; return; fi
    exists="$(aws configure get aws_access_key_id --profile $1)"
