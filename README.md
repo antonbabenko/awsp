@@ -15,7 +15,7 @@ Features
 * Support configurable location of credentials file (`AWS_SHARED_CREDENTIALS_FILE` environment variable)
 * Full compatibility with official AWS CLI
 * Assume roles which require MFA
-* What else you can think of? Please open an issue or submit PR.
+* Integration with [aws-vault](https://github.com/99designs/aws-vault) to prevent secrets from storing in plain-text
 
 Install
 =======
@@ -32,17 +32,18 @@ Install
 * (Optional) Enable aliases and auto-completion into your `~/.bash_profile` or similar:
 
 ```
-    alias awsall="_awsListAll"
-    alias awsp="_awsSwitchProfile"
+    alias awsall="_awsConfigListAll"
+    alias awsp="_awsSetProfile"
     alias awswho="aws configure list"
 
     complete -W "$(cat $HOME/.aws/credentials | grep -Eo '\[.*\]' | tr -d '[]')" _awsSwitchProfile
+    complete -W "$(cat $HOME/.aws/config | grep -Eo '\[.*\]' | tr -d '[]' | cut -d " " -f 2)" _awsSetProfile
 ```
 
 Examples
 ========
 
-Content of `~/.aws/credentials`:
+Content of `~/.aws/config`:
 ```
 [company-anton]
 aws_access_key_id=EXAMPLEACCESSKEY
@@ -68,10 +69,12 @@ To change AWS profile to use production account (111111111111) which requires MF
     # Please enter your MFA token for arn:aws:iam::333333333333:mfa/anton
     > 123456
     
-Note
-====
+Notes
+=====
 
-This code has been tested only on Mac and there are no intentions to make it to work on other systems (if necessary), but PR are very much welcome!
+1. This code has been tested only on Mac and there are no intentions to make it to work on other systems (if necessary)!
+
+1. To avoid storing AWS secrets in plain text you can use [aws-vault](https://github.com/99designs/aws-vault), while keeping the same `awsp` script to switch roles.
 
 Authors
 =======

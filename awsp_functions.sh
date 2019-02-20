@@ -10,7 +10,7 @@ function _awsListAll() {
     while read line; do
         if [[ $line == "["* ]]; then echo "$line"; fi;
     done < $credentialFileLocation;
-};
+}
 
 function _awsListProfile() {
     profileFileLocation=$(env | grep AWS_CONFIG_FILE | cut -d= -f2);
@@ -22,6 +22,7 @@ function _awsListProfile() {
     done < $profileFileLocation;
 };
 
+# Switch profile by setting all env vars
 function _awsSwitchProfile() {
    if [ -z $1 ]; then  echo "Usage: awsp profilename"; return; fi
    exists="$(aws configure get aws_access_key_id --profile $1)"
@@ -57,6 +58,7 @@ function _awsSwitchProfile() {
            aws_session_token=""
        fi
        export AWS_DEFAULT_PROFILE=$1
+	   export AWS_PROFILE=$1
        export AWS_ACCESS_KEY_ID=$aws_access_key_id
        export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
        [[ -z "$aws_session_token" ]] && unset AWS_SESSION_TOKEN || export AWS_SESSION_TOKEN=$aws_session_token
@@ -64,4 +66,17 @@ function _awsSwitchProfile() {
        echo "Switched to AWS Profile: $1";
        aws configure list
    fi
-};
+}
+
+# Set AWS_DEFAULT_PROFILE and AWS_PROFILE env variables
+function _awsSetProfile() {
+   if [ -z $1 ]; then  echo "Usage: awsp profilename"; return; fi
+
+   export AWS_DEFAULT_PROFILE=$1
+   export AWS_PROFILE=$1
+
+   echo "Switched to AWS Profile: $1"
+   echo "Environment variables with credentials were not set (which is desired). Sample commands to run:"
+   echo "$ aws-vault exec $1 -- aws s3 ls    <-- if this is too long"
+   echo "$ aws s3 ls   <-- this is the same but shorter and using AWS profile $1"
+}
