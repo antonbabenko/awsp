@@ -32,7 +32,7 @@ Install
 * (Optional) Enable aliases and auto-completion into your `~/.bash_profile` or similar:
 
 ```
-    alias awsall="_awsConfigListAll"
+    alias awsall="_awsListProfile"
     alias awsp="_awsSetProfile"
     alias awswho="aws configure list"
 
