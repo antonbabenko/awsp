@@ -26,10 +26,12 @@ function _awsListProfile() {
 function _awsSwitchProfile() {
    if [ -z $1 ]; then  echo "Usage: awsp profilename"; return; fi
    exists="$(aws configure get aws_access_key_id --profile $1)"
-   role_arn="$(aws configure get role_arn --profile $1)"
-   if [[ -n $exists || -n $role_arn ]]; then
-       if [[ -n $role_arn ]]; then
-           mfa_serial="$(aws configure get mfa_serial --profile $1)"
+
+   if [[ -n $exists ]]; then
+       role_arn="$(aws configure get role_arn --profile $1)"
+       mfa_serial="$(aws configure get mfa_serial --profile $1)"
+
+       if [[ -n $role_arn || -n $mfa_serial ]]; then
            if [[ -n $mfa_serial ]]; then
                echo "Please enter your MFA token for $mfa_serial:"
                read mfa_token
@@ -42,11 +44,15 @@ function _awsSwitchProfile() {
                profile=$1
            fi
 
-           echo "Assuming role $role_arn using profile $profile"
-           if [[ -n $mfa_serial ]]; then
-               JSON="$(aws sts assume-role --profile=$profile --role-arn $role_arn --role-session-name "$profile" --serial-number $mfa_serial --token-code $mfa_token)"
+           if [[ -n $role_arn ]]; then
+              echo "Assuming role $role_arn using profile $profile"
+              if [[ -n $mfa_serial ]]; then
+                  JSON="$(aws sts assume-role --profile=$profile --role-arn $role_arn --role-session-name "$profile" --serial-number $mfa_serial --token-code $mfa_token)"
+              else
+                  JSON="$(aws sts assume-role --profile=$profile --role-arn $role_arn --role-session-name "$profile")"
+              fi
            else
-               JSON="$(aws sts assume-role --profile=$profile --role-arn $role_arn --role-session-name "$profile")"
+              JSON="$(aws sts get-session-token --profile=$profile --serial-number $mfa_serial --token-code $mfa_token)"
            fi
 
            aws_access_key_id="$(echo $JSON | jq -r '.Credentials.AccessKeyId')"
